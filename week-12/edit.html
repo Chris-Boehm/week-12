@@ -1,0 +1,112 @@
+<html>
+	<head>
+		<title>CRUD Editing</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+	</head>
+	<body>
+		<div class="container">
+			<h1>Pokemon Editing</h1>
+			<h4 style="display:inline;">Your Pokemon:</h4>
+			<div id="yourPokemon" style="display: inline;"></div>
+			
+			<form style="margin-top: 20px;">
+			  <div class="form-group">
+				<label for="editPokemon">New Pokemon Listing</label>
+				<input type="text" class="form-control" placeholder="Enter a New Name" name="" id="">
+			  </div>
+			  <button type="submit" class="btn btn-primary">Save Changes</button>
+			 </form>
+			
+			
+			
+			<a href="index.html"><p style="margin-top: 20px;">Return to Home</p></a>
+		</div>
+		
+		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+		<script>
+			
+			var pokemon = JSON.parse(localStorage.getItem('pokemon')); 
+			var queryPokemonId = new URLSearchParams(window.location.search);
+			var chosenPokemon = pokemon;
+			var pokemonDiv = $("#yourPokemon");
+			var pokemonInput = $("input");
+			
+			if (queryPokemonId.get('id') == "0") {
+				pokemonDiv.append(`${pokemon[0].mostFavoritePokemon}`);
+				pokemonInput.attr("name", "mostFavoritePokemon");
+				pokemonInput.attr("id", "mostFavoritePokemon");
+			}
+			else if (queryPokemonId.get('id') == "1") {
+				pokemonDiv.append(`${pokemon[0].secondFavoritePokemon}`);
+				pokemonInput.attr("name", "secondFavoritePokemon");
+				pokemonInput.attr("id", "secondFavoritePokemon");
+			}
+			else if (queryPokemonId.get('id') == "2") {
+				pokemonDiv.append(`${pokemon[0].thirdFavoritePokemon}`);
+				pokemonInput.attr("name", "thirdFavoritePokemon");
+				pokemonInput.attr("id", "thirdFavoritePokemon");
+			}
+		
+			$('form').submit(function(event) {
+				
+				event.preventDefault();
+					
+				var formData = $(this).serializeArray();
+				console.log("Form Data:", formData);
+				
+				var favoritePokemonObject = condenseData(formData);
+				
+				
+				saveNewPokemonToLocalStorage(favoritePokemonObject);
+				
+				redirectToIndex();
+			});
+			
+			function condenseData(formData) {
+				
+				var object = {};
+				
+				$(formData).each(function() {
+					console.log(this);
+					object[this.name] = this.value;
+				});
+				
+				console.log("object:", object);
+				
+				return object;
+			}
+			
+			function saveNewPokemonToLocalStorage(favoritePokemonObject) {
+			
+				console.log(favoritePokemonObject);
+				
+			
+				var pokemonArray = JSON.parse(localStorage.getItem('pokemon'));
+				
+				if(!pokemonArray) {
+					pokemonArray = [];
+				}
+				
+				if(queryPokemonId.get('id') == "0") {
+					pokemonArray[0].mostFavoritePokemon = favoritePokemonObject.mostFavoritePokemon;
+				}
+				else if(queryPokemonId.get('id') == "1") {
+					pokemonArray[0].secondFavoritePokemon = favoritePokemonObject.secondFavoritePokemon;
+				}
+				else if (queryPokemonId.get('id') == "2") {
+					pokemonArray[0].thirdFavoritePokemon = favoritePokemonObject.thirdFavoritePokemon;
+				}
+				
+				console.log(pokemonArray[0]);
+			
+				localStorage.setItem('pokemon', JSON.stringify(pokemonArray));
+			}
+			
+			function redirectToIndex() {
+				window.location.href = "index.html"
+			}
+			
+		</script>
+	</body>
+</html>
